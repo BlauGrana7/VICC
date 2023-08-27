@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+  
+  <!-- jumbotron -->
+  <section class="jumbotron text-center">
+    <div class="container">
+      <h1 class="jumbotron-heading">Expense Tracking app</h1>
+      <p class="lead text-muted">A cool Expense Tracking app. Put your money under control!</p>
+      <p>
+        <a href="{{ url_for('add')}} " class="btn btn-primary my-2">Add new expense</a>
+      </p>
+    </div>
+  </section>
+  
+
+  <main>
+    <div class="container ">
+      <div class="row ">
+       
+        <div class="col-md-8 mx-auto">
+          {% if expenses %}
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">date</th>
+                <th scope="col">Category</th>
+                <th scope="col">Title</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for expense in expenses %}
+              <tr>
+                <th scope="row">{{expense.id}}</th>
+                <td>{{expense.date.strftime('%Y-%m-%d')}}</td>
+                <td>{{expense.category}}</td>
+                <td>{{expense.title}}</td>
+                <td>{{"${:,.2f}".format(expense.amount)}}</td>
+                <td>
+
+                  <a href="{{ url_for('update', expense_id=expense.id) }}" class="btn btn-primary btn-sm m-1">Edit</a>
+                  <button type="button" class="btn btn-danger btn-sm m-1" data-toggle="modal" data-target="#delete-{{expense.id}}">Delete</button>
+                </td>
+              </tr>
+              {% endfor%}
+              
+            </tbody>
+          </table>
+          {% else %}
+          <div class="card">
+            <div class="card-body text-center">
+              <p>Empty list</p>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </main>
+
+
+  {% for expense in expenses %}
+ <!-- Modal -->
+ <div class="modal fade" id="delete-{{expense.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+  <div class="modal-content">
+      <div class="modal-header">
+      <h5 class="modal-title" id="deleteModalLabel">Delete Expense?</h5>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+      </button>
+      </div>
+      <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      <form action="{{ url_for('delete', expense_id=expense.id) }}" method="POST">
+          <input class="btn btn-danger" type="submit" value="Delete">
+      </form>
+      </div>
+  </div>
+  </div>
+</div>
+
+  {% endfor%}
+{% endblock content %}
